@@ -6,3 +6,5 @@ Adaptive Robust Control Framework for Tokamak Vertical Stabilization.
 - Square-Root RLS Identification
 - Tube-based MPC
 - NOBEL Safety Interlock
+- ### 📊 Performance Benchmark
+![ELM Rejection](aion_benchmark.png)
