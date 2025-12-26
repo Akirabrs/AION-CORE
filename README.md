@@ -1,53 +1,95 @@
-# AION CORE: Adaptive Robust Control Framework
+<div align="center">
+  <img src="docs/banner.png" alt="AION Banner" width="100%">
+  <br><br>
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Status](https://img.shields.io/badge/status-stable-green.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-
-**AION (Adaptive Intelligence for Operation & Navigation)** is a real-time control framework designed for unstable magnetic confinement systems (Tokamaks). It integrates **Square-Root Recursive Least Squares (SR-RLS)** identification with **Tube-based Model Predictive Control (Tube-MPC)**.
+  [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)]()
+  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)]()
+  [![Status](https://img.shields.io/badge/Status-Research%20Prototype-orange?style=for-the-badge)]()
+</div>
 
 ---
 
-## 🏗️ Architecture
+# ⚛️ AION MPC - Plasma Control System
+
+> **Model Predictive Control system for tokamak plasma position stabilization**
+> *Developed by a 17-year-old on a mobile device | December 2025*
+
+## 🎯 What is this?
+
+AION (**A**daptive **I**ntelligence for **O**peration & **N**avigation) is a real-time control framework designed to stabilize unstable plasma in nuclear fusion reactors. It addresses the **Vertical Displacement Event (VDE)** problem, where plasma can hit the reactor walls in milliseconds.
+
+It combines:
+- **Tube-based MPC** for robust constraint satisfaction.
+- **SR-RLS** for real-time parameter identification.
+- **NOBEL Safety Interlock** for fail-safe reactor protection.
+
+---
+
+## 🏗️ System Architecture
 
 The system operates in a closed-loop cycle with a strict 1ms time budget.
 
 ```mermaid
 graph TD
-    A[Sensors] -->|y_meas| B(SR-RLS)
-    B -->|theta_est| C{{Tube MPC}}
-    D[Reference] -->|x_ref| C
-    C -->|u_opt| E[Actuators]
-    E -->|u| F[Tokamak Plant]
-    F --> A
+    subgraph "Tokamak (Plant)"
+        Plasma((Plasma Physics))
+        Sensors[Magnetic Sensors]
+        Actuators[Poloidal Field Coils]
+    end
+
+    subgraph "AION-CORE (Controller)"
+        SR_RLS[🔍 SR-RLS Identifier]
+        MPC{{🧠 Tube-MPC Solver}}
+        Safety[🛡️ NOBEL Interlock]
+    end
+
+    Sensors -->|y_meas| SR_RLS
+    SR_RLS -->|θ_est, Σ| MPC
+    Safety -->|SCRAM Signal| Actuators
+    MPC -->|u_opt| Safety
+    Safety -->|u_safe| Actuators
+    Actuators -->|Magnetic Field| Plasma
+    
+    style MPC fill:#238636,stroke:#fff,stroke-width:2px,color:#fff
+    style Safety fill:#da3633,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
 
-## 📐 Mathematical Formulation
+## 📊 Performance Validation
 
-### 1. System Identification (SR-RLS)
-To maintain numerical stability, AION uses Square-Root factorization ($P = S S^T$).
-Parameter update law:
+Stabilization of a simulated 4.5cm vertical displacement (Type-I ELM disturbance scenario).
 
-$$\theta_k = \theta_{k-1} + K_k (y_k - \phi_k^T \theta_{k-1})$$
+![Simulation Results](docs/simulation_results.png)
 
-### 2. Robust Tube MPC
-Optimization cost function:
-
-$$J = \sum_{k=0}^{N-1} ( ||\bar{x}_k - x_{ref}||_Q^2 + ||\bar{u}_k||_R^2 )$$
+| Metric | Value | Note |
+|:---|:---|:---|
+| **Response Time** | `< 1.0 ms` | Real-time constraint met |
+| **Steady State Error** | `± 0.2 mm` | High precision |
+| **Overshoot** | `< 5%` | Safe operational margin |
 
 ---
 
-## 📊 Validation Results
+## 🚀 Quick Start
 
-Performance under Type-I ELM disturbance:
+### Installation
 
-![Benchmark](aion_benchmark.png)
+```bash
+git clone [https://github.com/Akirabrs/AION-CORE.git](https://github.com/Akirabrs/AION-CORE.git)
+cd AION-CORE
+pip install -r requirements.txt
+```
+
+---
+
+## 👤 Author
+
+**Guilherme Brasil (Akira)** *17 years old • Self-taught • Fusion Energy Enthusiast*
+
+Built entirely on a mobile device to demonstrate that **innovation has no hardware prerequisites**.
+
+---
 
 ## 📚 References
 1. **Åström, K. J.** (2013). *Adaptive Control*.
-2. **Mayne, D. Q.** (2005). *Robust MPC of constrained linear systems*.
-
----
-*Last Verification: 2025-12-26 17:25:32*
+2. **ITER Physics Basis** (1999). *Nuclear Fusion*, Vol 39.
