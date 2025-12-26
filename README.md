@@ -5,6 +5,7 @@
   [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)]()
   [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)]()
   [![Status](https://img.shields.io/badge/Status-Research%20Prototype-orange?style=for-the-badge)]()
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18064672.svg)](https://doi.org/10.5281/zenodo.18064672)
 </div>
 
 ---
