@@ -70,6 +70,20 @@ Stabilization of a simulated 4.5cm vertical displacement (Type-I ELM disturbance
 
 ---
 
+
+---
+
+## 🧬 Project Evolution & Stack
+
+AION is a multi-disciplinary project spanning software, firmware, and hardware.
+
+| Layer | Language | Function | Location |
+|:---|:---|:---|:---|
+| **Level 1: Research** | 🐍 **Python** | Algorithm Design, Simulation, SR-RLS Math | `src/aion` |
+| **Level 2: Real-Time** | ⚡ **C++** | Embedded Control (ESP32), Microsecond latency | `src/cpp` |
+| **Level 3: Safety** | 🔌 **Verilog** | FPGA Interlock (NOBEL), Nanosecond latency | `src/fpga` |
+
+
 ## 🚀 Quick Start
 
 ### Installation
