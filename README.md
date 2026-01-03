@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Architecture-COOK%20Framework-blueviolet?style=for-the-badge&logo=arduino" alt="Architecture">
   <img src="https://img.shields.io/badge/Latency-%3C%201%C2%B5s%20(Determininstic)-blue?style=for-the-badge&logo=speedtest" alt="Latency">
   <img src="https://img.shields.io/badge/Platform-FPGA%20%2F%20Verilog%20HDL-red?style=for-the-badge&logo=xilinx" alt="Platform">
-  <a href="https://zenodo.org/badge/latestdoi/897654321"><img src="https://zenodo.org/badge/897654321.svg" alt="DOI"></a>
+  <a href="https://zenodo.org/badge/latestdoi/750987654"><img src="https://zenodo.org/badge/750987654.svg" alt="DOI"></a>
 </p>
 
 ---
@@ -17,6 +17,18 @@
 The system is implemented on bare-metal FPGA fabric (Verilog HDL), unifying the **AEGIS** safety protocols and **NPE-PSQ** synchronization metrics into a monolithic **Control-Oriented Operating Kernel (COOK)**.
 
 > **Key Performance Indicator:** Stabilizes VDEs with growth rates $\gamma \approx 2800$ rad/s with a reflex latency of $\tau < 1 \mu s$.
+
+---
+
+## ⚠️ Ethical Disclosure & Project Status
+
+**1. AI-Assisted Development:**
+This project utilizes Large Language Models (LLMs) as a technical co-pilot for code generation, LaTeX formatting, and architectural structuring. While the core concepts (PACC/COOK/AEGIS) and system architecture were conceived by the human author, implementation details rely heavily on AI synthesis and rapid prototyping.
+
+**2. Validation Limitations (TRL 4):**
+* ✅ **Validated:** Mathematical logic and control loops via Python stochastic simulation (Industrial Noise Model).
+* ❌ **Not Validated:** Physical FPGA hardware implementation (HIL), real plasma coupling, or industrial safety certification.
+* **Warning:** This is an academic proof-of-concept. **Do not deploy** on active magnetic confinement devices without rigorous independent review.
 
 ---
 
