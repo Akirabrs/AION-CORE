@@ -1,11 +1,11 @@
 # AION-CORE: Physics-Anchored Anticipatory Control Kernel
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-TRL%204%20(Lab%20Validated)-success?style=for-the-badge&logo=github" alt="Status">
+  <img src="https://img.shields.io/badge/Status-TRL%204%20(Sim%20Validated)-success?style=for-the-badge&logo=python" alt="Status">
   <img src="https://img.shields.io/badge/Architecture-COOK%20Framework-blueviolet?style=for-the-badge&logo=arduino" alt="Architecture">
   <img src="https://img.shields.io/badge/Latency-%3C%201%C2%B5s%20(Determininstic)-blue?style=for-the-badge&logo=speedtest" alt="Latency">
   <img src="https://img.shields.io/badge/Platform-FPGA%20%2F%20Verilog%20HDL-red?style=for-the-badge&logo=xilinx" alt="Platform">
-  <a href="https://zenodo.org/badge/latestdoi/750987654"><img src="https://zenodo.org/badge/750987654.svg" alt="DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.18136444"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18136444.svg" alt="DOI"></a>
 </p>
 
 ---
@@ -46,7 +46,7 @@ $$
 \Gamma_{boost}(\dot{Z}) = 
 \begin{cases} 
 1 & \text{if } |\dot{Z}| < V_{thresh} \text{ (Linear Regime)} \\
-\alpha \cdot e^{\beta |\dot{Z}|} & \text{if } |\dot{Z}| \geq V_{thresh} \text{ (Guardian Regime)}
+\alpha \cdot e^{\beta (|\dot{Z}| - V_{thresh})} & \text{if } |\dot{Z}| \geq V_{thresh} \text{ (Guardian Regime)}
 \end{cases}
 $$
 
