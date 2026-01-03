@@ -1,0 +1,92 @@
+\documentclass[10pt, twocolumn, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{cite} % Essencial para bibtex
+
+\geometry{margin=0.7in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=cyan,
+    pdftitle={AION-CORE Whitepaper},
+    pdfauthor={Guilherme Brasil de Souza}
+}
+
+\title{\textbf{\Large AION-CORE: A Physics-Anchored Anticipatory Control Kernel \\ for High-Beta Tokamak Plasmas}}
+\author{Guilherme Brasil de Souza \\ \textit{Guibral-Labs Research} \\ \texttt{guilhermebrs.kira@gmail.com}}
+\date{January 03, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent We introduce \textbf{AION-CORE}, a deterministic control kernel designed for the stabilization of Vertical Displacement Events (VDEs) in high-$\beta$ tokamak plasmas. Unlike traditional PID controllers that rely on error integration, AION utilizes the \textbf{PACC (Physics-Aware Adaptive Control)} paradigm to preemptively act upon physical precursors within the microsecond regime \cite{AION_CORE_2026}. The framework unifies the \textbf{AEGIS} safety protocols and \textbf{NPE-PSQ} synchronization metrics into a monolithic FPGA architecture. Simulation results demonstrate stabilization of VDEs with growth rates $\gamma \approx 2800$ rad/s.
+\end{abstract}
+
+\section{Introduction}
+Controlling magnetically confined plasmas demands strategies that operate on the brink of hydrodynamic instability. Standard Model Predictive Control (MPC) often fails in VDE scenarios due to computational latency ($>1$ms) \cite{bemporad2007mpc}, while PID lacks the stiffness required for exponential runaways described by Wesson \cite{wesson2011tokamaks}. This paper presents the \textbf{COOK Framework}, utilizing a nonlinear "Guardian Gain" to stiffen control coils as plasma velocity approaches safety margins \cite{fitzpatrick2009vertical}.
+
+\section{The PACC Paradigm}
+\subsection{Hamiltonian Control Law}
+The control law minimizes a physics-anchored cost function $J$. The actuation voltage $u(t)$ is defined as:
+\begin{equation}
+u(t) = - K_p \cdot Z(t) - K_d \cdot \Gamma_{\text{boost}}(\dot{Z}) \cdot \dot{Z}(t)
+\end{equation}
+Where $Z(t)$ is the vertical displacement.
+
+\subsection{The Guardian Gain ($\Gamma$)}
+To ensure compliance during quiescence and robust defense during instability, the derivative gain is modulated by:
+\begin{equation}
+\Gamma_{\text{boost}}(\dot{Z}) = 
+\begin{cases} 
+1 & \text{if } |\dot{Z}| < V_{\text{thresh}} \\
+\alpha \cdot e^{\beta (|\dot{Z}| - V_{\text{thresh}})} & \text{if } |\dot{Z}| \ge V_{\text{thresh}}
+\end{cases}
+\end{equation}
+
+\section{COOK Framework Architecture}
+The system operates on two decoupled frequency domains to ensure determinism, as detailed in the technical documentation \cite{AION_CORE_2026}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[node distance=1.2cm, auto, scale=0.8, transform shape]
+      \node (plant) [draw, rectangle, fill=gray!10, minimum width=2cm] {Tokamak Plant};
+      \node (sensor) [draw, rectangle, below of=plant] {Fast Sensors};
+      \node (l1) [draw, rectangle, fill=red!10, below of=sensor, yshift=-0.5cm] {\textbf{L1: Reflex Core} (FPGA)};
+      \node (l2) [draw, rectangle, fill=blue!10, right of=l1, xshift=3cm] {\textbf{L2: Cognitive} (Model)};
+      \node (act) [draw, rectangle, left of=l1, xshift=-3cm] {Actuators};
+      \draw[->, thick] (plant) -- (sensor);
+      \draw[->, ultra thick] (sensor) -- (l1);
+      \draw[->, dashed] (l2) -- (l1);
+      \draw[->, ultra thick] (l1) -- (act);
+      \draw[->, thick] (act) |- (plant);
+    \end{tikzpicture}
+    \caption{The COOK Dual-Loop Architecture.}
+    \label{fig:cook}
+\end{figure}
+
+\section{Discussion}
+\subsection{Latency vs. Optimality}
+Simulation results highlight a trade-off. While MPC offers global optimality \cite{bemporad2007mpc}, it incurs latencies incompatible with the thermal quench time margin \cite{wesson2011tokamaks}. AION-CORE achieves sub-microsecond response times ($\tau < 1 \mu s$) via PACC, proving superior for high-velocity VDEs ($\gamma > 2500$ rad/s).
+
+\subsection{Hardware Feasibility}
+Preliminary synthesis indicates that the Reflex Core consumes minimal FPGA resources, allowing room for diagnostic integration similar to modern DIII-D control systems \cite{humphreys2009real}.
+
+\subsection{Limitations (TRL 4)}
+As noted in \cite{AION_CORE_2026}, this system is a Proof-of-Concept. Validation is limited to stochastic simulations. No HIL or tokamak operations have been performed.
+
+\section{Conclusion}
+This work consolidates AION-CORE as a viable paradigm for fast plasma instabilities, bridging the gap between classical feedback and predictive systems.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
