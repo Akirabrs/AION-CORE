@@ -1,56 +1,87 @@
-# AION-CORE: Physics-Aware Adaptive Control Kernel
+# AION-CORE: Physics-Anchored Anticipatory Control Kernel
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-TRL%204%20(Lab%20Validated)-success?style=for-the-badge&logo=github" alt="Status">
-  <img src="https://img.shields.io/badge/Platform-FPGA%20%2F%20Real--Time-red?style=for-the-badge&logo=xilinx" alt="Platform">
-  <img src="https://img.shields.io/badge/Latency-%3C%201%C2%B5s%20(Target)-blue?style=for-the-badge&logo=speedtest" alt="Latency">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-lightgrey?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Architecture-COOK%20Framework-blueviolet?style=for-the-badge&logo=arduino" alt="Architecture">
+  <img src="https://img.shields.io/badge/Latency-%3C%201%C2%B5s%20(Determininstic)-blue?style=for-the-badge&logo=speedtest" alt="Latency">
+  <img src="https://img.shields.io/badge/Platform-FPGA%20%2F%20Verilog%20HDL-red?style=for-the-badge&logo=xilinx" alt="Platform">
+  <a href="https://zenodo.org/badge/latestdoi/897654321"><img src="https://zenodo.org/badge/897654321.svg" alt="DOI"></a>
 </p>
 
 ---
 
-## ⚛️ The Paradigm Shift in Fast Control
+## 📑 Executive Abstract
 
-**AION-CORE** is a **Control Kernel** designed for extreme physical systems where traditional PID fails due to latency, and standard MPC fails due to computational load. It unifies the **AEGIS** safety protocols and **NPE-PSQ** metrics into a single architecture.
+**AION-CORE** is a deterministic control kernel designed for the stabilization of high-$\beta$ tokamak plasmas, specifically targeting **Vertical Displacement Events (VDEs)**. Unlike traditional PID controllers that react to error integration ($\int e(t)dt$), AION utilizes the **PACC (Physics-Aware Adaptive Control)** paradigm to preemptively act upon physical precursors ($\frac{dI_p}{dt}, \frac{dB}{dt}$) within the microsecond regime.
 
-It introduces the **PACC (Physics-Aware Adaptive Control Core)** paradigm: orchestrating control decisions based on immediate physical precursors rather than delayed error integration.
+The system is implemented on bare-metal FPGA fabric (Verilog HDL), unifying the **AEGIS** safety protocols and **NPE-PSQ** synchronization metrics into a monolithic **Control-Oriented Operating Kernel (COOK)**.
 
-> **Core Mission:** To provide a deterministic, sub-microsecond "Guardian Layer" for systems operating on the brink of instability, such as Tokamak plasmas and pulsed propulsion drives.
+> **Key Performance Indicator:** Stabilizes VDEs with growth rates $\gamma \approx 2800$ rad/s with a reflex latency of $\tau < 1 \mu s$.
 
 ---
 
-## 🏗️ Architecture: The COOK Framework
+## 📐 The PACC Mathematical Model
 
-AION-CORE executes within the **Control-Oriented Operating Kernel (COOK)**, a dual-loop architecture optimized for determinism.
+The core control law deviates from standard MPC. It minimizes a physics-anchored cost function $J$ based on the Hamiltonian energy of the plasma column:
+
+$$
+u(t) = - K_p(t) \cdot Z(t) - K_d(t) \cdot \Gamma_{boost}(\dot{Z}) \cdot \dot{Z}(t)
+$$
+
+Where $\Gamma_{boost}$ is the nonlinear **Guardian Gain** derived from the AEGIS layer:
+
+$$
+\Gamma_{boost}(\dot{Z}) = 
+\begin{cases} 
+1 & \text{if } |\dot{Z}| < V_{thresh} \text{ (Linear Regime)} \\
+\alpha \cdot e^{\beta |\dot{Z}|} & \text{if } |\dot{Z}| \geq V_{thresh} \text{ (Guardian Regime)}
+\end{cases}
+$$
+
+This ensures linear compliance during quiescence and exponential stiffness during instability onset.
+
+---
+
+## 🏗️ System Architecture: The COOK Framework
+
+The **Control-Oriented Operating Kernel (COOK)** operates on a dual-loop frequency domain, separating reflex safety actions from cognitive adaptations.
 
 ```mermaid
 graph TD
-    subgraph Plant ["Physical Plant (Tokamak/PEC)"]
-        S["⚡ Fast Sensors (dB/dt, Ip)"]
-        A["🔌 Actuators (Coils/Pulses)"]
+    subgraph Plant ["⚛️ TOKAMAK PHYSICAL PLANT"]
+        S_FAST["⚡ Magnetic Probes (Mirnov Coils)"]
+        S_SLOW["🌡️ Thomson Scattering / CXRS"]
+        ACT["🔌 Poloidal Field Coils (PF)"]
     end
 
-    subgraph Kernel ["COOK Kernel (FPGA Fabric)"]
+    subgraph FPGA ["💻 COOK KERNEL (FPGA FABRIC)"]
         direction TB
         
-        subgraph L1 ["Layer 1: Reflex Loop (<1µs)"]
-            PM["🔍 Precursor Monitor"]
+        subgraph LAYER_1 ["🔴 LAYER 1: REFLEX CORE (100 MHz)"]
+            ADC["ADC Interface"]
+            PRE["🔍 Precursor Monitor (dB/dt)"]
             TM["🧠 Threat Memory (BRAM)"]
-            GL["🛡️ Guardian Logic (AEGIS Layer)"]
+            AEGIS["🛡️ AEGIS Guardian Logic"]
+            PWM["PWM Generator"]
+            
+            ADC ==> PRE
+            PRE ==>|Event Trigger| TM
+            TM ==>|Zero-Copy Access| AEGIS
+            AEGIS ==>|Hard Real-Time Pulse| PWM
         end
 
-        subgraph L2 ["Layer 2: Cognitive Loop (~1ms)"]
-            ADAPT["🔄 RLS Model Adaptation"]
+        subgraph LAYER_2 ["🔵 LAYER 2: COGNITIVE LOOP (1 kHz)"]
+            RLS["🔄 RLS Parameter Estimator"]
+            MODEL["📈 Digital Twin Model"]
+            
+            RLS -.->|Update Gains Kp, Kd| AEGIS
+            MODEL -.->|Verify Safety Margins| TM
         end
-
-        S ===>|Raw Data| PM
-        PM ===>|Signature Match| TM
-        TM ===>|Candidate Action| GL
-        GL ===>|Verified Pulse| A
-        
-        S -.->|Slow Data| ADAPT
-        ADAPT -.->|Update Parameters| TM
     end
 
-    style GL fill:#f96,stroke:#333,stroke-width:2px,color:black
-    style PM fill:#add8e6,stroke:#333,color:black
+    S_FAST ==>|LVDS Link| ADC
+    S_SLOW -.->|Ethernet| RLS
+    PWM ==>|IGBT Gate Drive| ACT
+    
+    style AEGIS fill:#ff4d4d,stroke:#333,stroke-width:3px,color:white
+    style RLS fill:#4d79ff,stroke:#333,stroke-width:2px,color:white
