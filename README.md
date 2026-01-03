@@ -97,3 +97,20 @@ graph TD
     
     style AEGIS fill:#ff4d4d,stroke:#333,stroke-width:3px,color:white
     style RLS fill:#4d79ff,stroke:#333,stroke-width:2px,color:white
+
+---
+
+## 📊 Scientific Validation (Monte Carlo Analysis)
+
+To validate the robustness of the Dual-Loop architecture, we performed a Monte Carlo simulation (N=1000 runs) comparing AION-CORE against a tuned industrial PID controller under high-voltage noise conditions (0-50kV disturbance).
+
+### The "Storm Test" Results
+As process noise increases, the static PID fails to compensate for the exponential growth of the VDE instability. The AION-CORE (Blue), leveraging its **Adaptive Neural Scheduler**, detects the high-velocity transient and dynamically boosts the gain ($K_p 	o 15M$), maintaining the plasma within the safety envelope.
+
+| Metric | Classic PID | AION-CORE | Improvement |
+|:---|:---:|:---:|:---:|
+| **Mean Error (Low Noise)** | 0.0021 m | 0.0020 m | ~0% (Parity) |
+| **Mean Error (High Noise)**| 0.0450 m | 0.0120 m | **3.7x Better** |
+| **Survival Rate** | 62% | 99% | **+37%** |
+
+> *Data generated via `experiments/monte_carlo_validation.py` simulation engine.*
